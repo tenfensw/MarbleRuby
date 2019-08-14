@@ -12,7 +12,7 @@ Just copy over "app_template" and "bundle.rb" to a folder called "marbleruby" in
 $ mkdir -v -p $HOME/marbleruby
 $ cp -r -v app_template $HOME/marbleruby/app_template
 $ cp -v bundle.rb $HOME/marbleruby/bundle.rb
-----y
+----
 
 == Usage
 Your Ruby project needs to have a file called "marbleruby.ru" in its root directory. This is a config file that contains information such as Ruby version to pack and use to run the app, app's dependencies (gems) as well as some other info. A typical "marbleruby.ru" looks like this:
