@@ -136,5 +136,13 @@ subst_conf(final_app_cwd + '/Contents/MacOS/marbleruby-launcher', { 'gems' => ge
 puts "Copying the source files..."
 FileUtils.cp_r(script_dir, final_app_cwd + '/Contents/Resources/src')
 
+puts "Installing gems..."
+final_app_cwd_gem = final_app_cwd + '/Contents/ContainedRuby/bin/gem'
+gems_to_install.each do |item|
+	if system('"' + final_app_cwd_gem + '" install -N --conservative --minimal-deps --no-prerelease ' + item) == false then
+		puts "Warning. #{item} was not installed. Try again later."
+	end
+end
+
 puts "Finished! Drag your app to /Applications, sign it and test it out!"
 exit 0

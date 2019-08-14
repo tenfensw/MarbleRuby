@@ -31,6 +31,12 @@ By default, the identifier of the app is set to ru.timkoi.marbleruby and the nam
 - *MARBLERUBY_APPID* to change the bundle identifier
 - *MARBLERUBY_TARGET* to change the final path where the generated application should be put
 
+You can also build a custom Ruby binary packed into a .app file with Interactive Ruby (IRB) started as the main script by running "build-interactive-ruby.rb" with Ruby version as the only argument. For example:
+[source,bash]
+----
+$ ruby build-interactive-ruby.rb 2.5.5
+----
+
 == Limitations
 [squares]
 - Currently, the binaries produced can only work on the version of macOS that you've used to build the .app bundle and higher. For example, if you use macOS 10.14 to build the binaries, then the produces binaries will work on macOS 10.14 and newer and won't work on macOS 10.13 or older. While this can be fixed with some linker flags, I haven't yet got Ruby 2.1 or newer to link statically or link with additional Clang flags (such as -mmacosx-version-min=10.9).
