@@ -1,0 +1,43 @@
+= MarbleRuby
+_Copyright (C) Tim K 2019. Licensed under MIT License._
+
+*MarbleRuby* is an experimental project that allows you to pack your Ruby applications with a compiled Ruby runtime and with all the dependencies into a single macOS .app file. This means that any user of macOS can use your application without installing RVM or Ruby manually.
+
+*THIS PROJECT IS EXPERIMENTAL AND MIGHT HAVE BUGS.* If you do find them, create a bug report on either GitHub or GitLab.
+
+== Usage
+Your Ruby application must be stored in a folder and the entry point (the main .rb file) should be named "marbleruby.rb". "marbleruby.rb" can also be a symlink to the real main Ruby file. The example application structure can be found in the "example" folder,
+
+To pack the application, use the "bundle.rb" script. It accepts two mandatory arguments:
+[squares]
+- the first one is the version of Ruby runtime to compile. If you want to use the same version as your system Ruby, use this line as the argument:
+[source,bash]
+----
+`ruby -v | cut -d ' ' -f2 | cut -d 'p' -f1`
+----
+- the second one is the path to the source code of your application
+
+For example, to pack the application from the "example" folder into a .app bundle with Ruby runtime version 2.4.6, run:
+[source,bash]
+----
+$ ruby bundle.rb 2.4.6 example/
+----
+
+This will produce a file named "example.app" in the current directory that, when dragged into /Applications, will work perfectly fine and launch your Ruby application. 
+
+By default, the identifier of the app is set to ru.timkoi.marbleruby and the name of the app is "MarbleRuby for <the basename of the folder with the source code>". If you want to change that, set one of these environment variables:
+[squares]
+- *MARBLERUBY_APPBRAND* to change the app name (how it is displayed in Finder and in the Dock)
+- *MARBLERUBY_APPID* to change the bundle identifier
+- *MARBLERUBY_TARGET* to change the final path where the generated application should be put
+
+== Limitations
+[squares]
+- Currently, the binaries produced can only work on the version of macOS that you've used to build the .app bundle and higher. For example, if you use macOS 10.14 to build the binaries, then the produces binaries will work on macOS 10.14 and newer and won't work on macOS 10.13 or older. While this can be fixed with some linker flags, I haven't yet got Ruby 2.1 or newer to link statically or link with additional Clang flags (such as -mmacosx-version-min=10.9).
+- Ruby 1.8 and older are not supported yet.
+- Currently, you have to sign the produced binaries manually.
+
+== License
+The source code is licensed under the MIT License. The Ruby icon is by FatCow Web Hosting (see "app_template/Contents/Resources/header.txt" for more info).
+
+The project is inspired by https://github.com/gosu/ruby-app.

@@ -1,0 +1,27 @@
+#!/bin/sh
+clear
+dirname_of_this=`dirname "$0"`
+dirname_of_this=`sh -c "cd \"$dirname_of_this\" && pwd"`
+gems=">gems<"
+cat "$dirname_of_this/../Resources/header.txt"
+echo ""
+printf "Verifying dependencies... "
+deps_log=/tmp/marbleruby-deps.log
+if "$dirname_of_this/../ContainedRuby/bin/gem" install -N $gems > $deps_log 2>&1
+then
+	echo "done"
+else
+	echo "fail"
+	cat $deps_log
+	rm -f $deps_log
+	echo ""
+	echo "Please contact the developer of this application."
+	exit 1
+fi
+
+echo "Starting up... "
+sleep 0.5
+clear
+cd "$dirname_of_this/Resources/src"
+"$dirname_of_this/../ContainedRuby/bin/ruby" marbleruby.rb
+exit $?

@@ -1,0 +1,5 @@
+#!/bin/sh
+dirname_of_this=`dirname "$0"`
+dirname_of_this=`sh -c "cd \"$dirname_of_this\" && pwd"`
+open -a Terminal "$dirname_of_this/marbleruby-launcher"
+exit $?
