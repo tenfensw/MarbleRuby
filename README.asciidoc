@@ -38,6 +38,6 @@ By default, the identifier of the app is set to ru.timkoi.marbleruby and the nam
 - Currently, you have to sign the produced binaries manually.
 
 == License
-The source code is licensed under the MIT License. The Ruby icon is by FatCow Web Hosting (see "app_template/Contents/Resources/header.txt" for more info).
+See LICENSE for more info.
 
 The project is inspired by https://github.com/gosu/ruby-app.
