@@ -81,7 +81,7 @@ gems_to_install = [ 'dialogbind' ]
 cli_configure = ''
 ARGV.shift
 script_dir = File.dirname(marbleruby_conf)
-output_app = $app['bundle'] || File.basename(script_dir) + '.app'
+output_app = $app['bundle'] || $app['output'] || File.basename(script_dir) + '.app'
 entry_point = $app['launcher'] || 'main.rb'
 if not File.directory? script_dir then
 	puts "No such file or directory - #{script_dir}."
