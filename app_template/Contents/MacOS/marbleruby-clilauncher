@@ -1,5 +1,6 @@
 #!/bin/sh
 dirname_of_this=`dirname "$0"`
 dirname_of_this=`sh -c "cd \"$dirname_of_this\" && pwd"`
+>d< && sh "$dirname_of_this/marbleruby-launcher"
 open -a Terminal "$dirname_of_this/marbleruby-launcher"
 exit $?

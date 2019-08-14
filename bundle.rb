@@ -40,12 +40,29 @@ class String
 end
 
 if ARGV.length < 1 || ARGV.include?('--help') then
-	puts "Usage: ruby #{$0} VERSION SCRIPT_DIR [--gems=gem1,gem2,etc] [OTHER CONFIGURE OPTIONS] "
-	puts "Example: ruby #{$0} 2.6.3"
+	puts "Usage: ruby #{$0} /path/to/your/marbleruby.ru"
 	exit 1
 end
 
-version = ARGV[0] || '2.6.3'
+marbleruby_conf = ARGV[0] || Dir.pwd + '/marbleruby.ru'
+if not File.exists? marbleruby_conf then
+	puts "Error. #{marbleruby_conf} does not exist."
+	exit 6
+end
+
+begin
+	load marbleruby_conf
+rescue => e
+	puts "Cannot load #{marbleruby_conf} due to this exception: #{e.to_s}."
+	exit 7
+end
+
+if $app == nil then
+	puts "Error. $app structure was not declared in #{marbleruby_conf}."
+	exit 8
+end
+
+version = $app['ruby'] || '2.6.3'
 if version.countc('.') < 2 then
 	puts "Error. Incorrect version format (#{version}). The correct one would be: major.minor.update."
 	puts "Examples: 2.6.3, 2.7.0, 2.4.1"
@@ -57,29 +74,27 @@ if version.start_with?('1.') && version.start_with?('1.9') == false then
 	exit 3
 end
 
-puts "Will be packing version #{version}."
+puts "Will be packing version Ruby #{version}."
+app_version = $app['version'] || '0.1'
 
 gems_to_install = [ 'dialogbind' ]
 cli_configure = ''
 ARGV.shift
-script_dir = ARGV[0] || Dir.pwd
-output_app = ENV['MARBLERUBY_TARGET'] || File.basename(script_dir) + '.app'
+script_dir = File.dirname(marbleruby_conf)
+output_app = $app['bundle'] || File.basename(script_dir) + '.app'
+entry_point = $app['launcher'] || 'main.rb'
 if not File.directory? script_dir then
 	puts "No such file or directory - #{script_dir}."
 	exit 3
-elsif not File.exists? script_dir + '/marbleruby.rb' then
-	puts "There is no launcher script in the folder. The launcher script must be called \"marbleruby.rb\"."
+elsif not File.exists? script_dir + '/' + entry_point then
+	puts "There is no launcher script with the name #{entry_point} in the folder. The launcher script must be called \"marbleruby.rb\"."
 	exit 4
 end
 ARGV.shift
 puts "Output: #{output_app}"
 
 ARGV.each do |arg|
-	if arg.downcase.start_with? '-gems=' then
-		gems_to_install = gems_to_install + arg.split('=')[-1].to_s.split(',')
-	else
-		cli_configure += arg
-	end
+	cli_configure += arg
 end
 
 version_short = version[0..2]
@@ -114,7 +129,11 @@ configure_line += ' --target=x86_64-apple-darwin13.0.0'
 puts "Configure: #{configure_line}"
 bash('Started configure', 'cd ' + out_build + ' && ' + configure_line, 'Configure failed.')
 bash('Make', 'cd ' + out_build + ' && make -j4 && make install DESTDIR="' + out_build + '/container"', 'Make failed.')
-final_app_cwd =  Dir.pwd + '/' + output_app
+final_app_cwd =  script_dir + '/macos-bundle-bin/' + output_app
+if File.directory? File.dirname(final_app_cwd) then
+	FileUtils.rm_rf(final_app_cwd)
+end
+FileUtils.mkdir_p(File.dirname(final_app_cwd))
 FileUtils.cp_r(skeleton_path, final_app_cwd)
 Dir.glob(out_build + '/container/Applications/' + output_app + '/Contents/*').each do |item|
 	if File.directory? item then
@@ -128,13 +147,25 @@ puts "Removing build directory..."
 FileUtils.rm_rf(out_build)
 
 puts "Reconfigring #{output_app}..."
-brand = ENV['MARBLERUBY_APPBRAND'] || 'MarbleRuby for ' + output_app[0..-5]
-appid = ENV['MARBLERUBY_APPID'] || 'ru.timkoi.marbleruby'
-subst_conf(final_app_cwd + '/Contents/Info.plist', { 'product' => brand, 'id' => appid })
-subst_conf(final_app_cwd + '/Contents/MacOS/marbleruby-launcher', { 'gems' => gems_to_install.join(' ') })
+brand = $app['name'] || 'MarbleRuby for ' + output_app[0..-5]
+appid = $app['id'] || 'ru.timkoi.marbleruby'
+terminal = $app['terminal'] || true
+subst_conf(final_app_cwd + '/Contents/Info.plist', { 'product' => brand, 'id' => appid, 'version' => app_version })
+subst_conf(final_app_cwd + '/Contents/MacOS/marbleruby-launcher', { 'gems' => gems_to_install.join(' '), 'entry_script' => entry_point })
+context_clilauncher = { 'd' => 'true' }
+if terminal then
+	context_clilauncher['d'] = 'false'
+end
+subst_conf(final_app_cwd + '/Contents/MacOS/marbleruby-clilauncher', context_clilauncher)
 
 puts "Copying the source files..."
-FileUtils.cp_r(script_dir, final_app_cwd + '/Contents/Resources/src')
+FileUtils.mkdir_p(final_app_cwd + '/Contents/Resources/src')
+Dir.glob(script_dir + '/*').each do |vitem|
+	puts "#{vitem}"
+	if File.basename(vitem) != 'macos-bundle-bin' then
+		FileUtils.cp_r(vitem, final_app_cwd + '/Contents/Resources/src/' + File.basename(vitem))
+	end
+end
 
 puts "Installing gems..."
 final_app_cwd_gem = final_app_cwd + '/Contents/ContainedRuby/bin/gem'

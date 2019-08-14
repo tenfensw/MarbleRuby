@@ -5,10 +5,11 @@ dirname_of_this=`sh -c "cd \"$dirname_of_this\" && pwd"`
 gems=">gems<"
 cat "$dirname_of_this/../Resources/header.txt"
 echo ""
+script=">entry_script<"
 
 echo "Starting up... "
 sleep 0.5
 clear
 cd "$dirname_of_this/Resources/src"
-"$dirname_of_this/../ContainedRuby/bin/ruby" marbleruby.rb
+"$dirname_of_this/../ContainedRuby/bin/ruby" "$script" $*
 exit $?
