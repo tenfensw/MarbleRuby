@@ -3,6 +3,7 @@
 # Copyright (C) Tim K 2019. Licensed under MIT License.
 require 'open-uri'
 require 'fileutils'
+require 'plist'
 
 def bash(desc, cmd, message_on_fail=nil)
 	puts "#{desc}"
@@ -13,6 +14,10 @@ def bash(desc, cmd, message_on_fail=nil)
 		puts "Error. #{message_on_fail}."
 		exit 5
 	end
+end
+
+def load_plist(plist_path)
+	$app = Plist.parse_xml(plist_path)
 end
 
 def subst_conf(file, hash_rep)
@@ -40,18 +45,32 @@ class String
 end
 
 if ARGV.length < 1 || ARGV.include?('--help') then
-	puts "Usage: ruby #{$0} /path/to/your/marbleruby.ru"
+	puts "Usage: ruby #{$0} [/path/to/marbleruby.plist]"
+	puts "       ruby #{$0} init"
 	exit 1
 end
 
-marbleruby_conf = ARGV[0] || Dir.pwd + '/marbleruby.ru'
+if ['proto', 'init'].include? ARGV[0] then
+	out = { 'id' => 'com.yourcompany.yourRubyApp',
+	 	'name' => 'Your Ruby app',
+		'gems' => [ 'dialogbind', 'plist' ],
+		'version' => '0.1',
+		'ruby' => '2.3.6',
+	        'bundle' => 'YourRubyApp.app',
+		'main' => 'main.rb',
+		'terminal' => true }.to_plist
+	File.write(Dir.pwd + '/marbleruby.plist', out)
+	exit 0
+end
+
+marbleruby_conf = ARGV[0] || Dir.pwd + '/marbleruby.plist'
 if not File.exists? marbleruby_conf then
 	puts "Error. #{marbleruby_conf} does not exist."
 	exit 6
 end
 
 begin
-	load marbleruby_conf
+	load_plist(marbleruby_conf)
 rescue => e
 	puts "Cannot load #{marbleruby_conf} due to this exception: #{e.to_s}."
 	exit 7

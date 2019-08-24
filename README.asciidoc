@@ -15,24 +15,20 @@ $ cp -v bundle.rb $HOME/marbleruby/bundle.rb
 ----
 
 == Usage
-Your Ruby project needs to have a file called "marbleruby.ru" in its root directory. This is a config file that contains information such as Ruby version to pack and use to run the app, app's dependencies (gems) as well as some other info. A typical "marbleruby.ru" looks like this:
-[source,ruby]
+Your Ruby project needs to have a file called "marbleruby.plist" in its root directory. This is a config file that contains information such as Ruby version to pack and use to run the app, app's dependencies (gems) as well as some other info. To generate a brand new "marbleruby.plist" in PWD, run this command::
+[source,bash]
 ----
-$app = { 'name' => '<app name as should be seen in Dock>',
-	 'version' => '<app version>',
-	 'id' => '<app ID>',
-	 'bundle' => '<app name>.app',
-	 'terminal' => true,
-	 'main' => '<the filename of the main .rb file that starts the application>' }
+$ ruby ~/marbleruby/bundle.rb init
 ----
-If you substitute all the <> values with yours and run:
-[source,ruby]
+
+Make changes to the generated plist file where necessary, then run this command to package the app:
+[source,bash]
 ----
 $ ruby ~/marbleruby/bundle.rb marbleruby.ru
 ----
 A folder called "macos-bundle-bin" will be created and the resulting .app file will be placed there. When you run it, a Terminal.app window should appear and you should see your app working just fine.
 
-*NOTE* Set the $app['terminal'] option to "false" (without quotes) if your app has a GUI and you don't want the Terminal.app window to appear when the user runs your app.
+*NOTE* Set the `<key>terminal</key> option to `</false>` (without quotes) if your app has a GUI and you don't want the Terminal.app window to appear when the user runs your app.
 
 == Building a standalone Ruby bundle
 If you just to want to pack the Ruby runtime of a specific version into a .app file, then use one of the .ru files from the "standalone-rubies" folder to build either a Ruby 2.4, 2.5 and 2.6 distribution.

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundle</key>
+	<string>Example.app</string>
+	<key>gems</key>
+	<array>
+		<string>dialogbind</string>
+	</array>
+	<key>id</key>
+	<string>ru.timkoi.marbleruby.example</string>
+	<key>main</key>
+	<string>main.rb</string>
+	<key>name</key>
+	<string>Example app using MarbleRuby</string>
+	<key>ruby</key>
+	<string>2.6.2</string>
+	<key>terminal</key>
+	<true/>
+	<key>version</key>
+	<string>1.0</string>
+</dict>
+</plist>
