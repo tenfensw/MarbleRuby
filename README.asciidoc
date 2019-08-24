@@ -14,6 +14,12 @@ $ cp -r -v app_template $HOME/marbleruby/app_template
 $ cp -v bundle.rb $HOME/marbleruby/bundle.rb
 ----
 
+Don't forget to install the `plist` gem afterwards:
+[source,bash]
+----
+$ sudo gem install -N plist
+----
+
 == Usage
 Your Ruby project needs to have a file called "marbleruby.plist" in its root directory. This is a config file that contains information such as Ruby version to pack and use to run the app, app's dependencies (gems) as well as some other info. To generate a brand new "marbleruby.plist" in PWD, run this command::
 [source,bash]

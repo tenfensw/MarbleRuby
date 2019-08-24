@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>gems</key>
+	<array/>
+	<key>id</key>
+	<string>ru.timkoi.marbleruby.standalone.ruby26</string>
+	<key>name</key>
+	<string>MarbleRuby 2.6</string>
+	<key>output</key>
+	<string>Ruby2.6.app</string>
+	<key>ruby</key>
+	<string>2.6.3</string>
+	<key>terminal</key>
+	<true/>
+	<key>version</key>
+	<string>2.6.3</string>
+</dict>
+</plist>
