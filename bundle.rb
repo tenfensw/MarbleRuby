@@ -120,11 +120,7 @@ version_short = version[0..2]
 url_formed = "https://cache.ruby-lang.org/pub/ruby/#{version_short}/ruby-#{version}.tar.gz"
 
 puts "Fetching Ruby YARV from #{url_formed}, this might actually take a while..."
-url_opened = open(url_formed, 'rb')
-out_file = open('/tmp/ruby.tgz', 'wb')
-out_file.write(url_opened.read)
-out_file.close
-url_opened.close
+system("curl", '-kLo', '/tmp/ruby.tgz', url_formed) or raise("curl failed")
 skeleton_path = File.dirname(File.absolute_path($0)) + '/app_template'
 
 puts "Finished! Unpacking..." 
